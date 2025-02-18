@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
- import{ Inter} from "next/font/google"
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
-
-const inter = Inter({subsets:['latin']})
-
+import Providers from "@/components/Providers";
+import "react-loading-skeleton/dist/skeleton.css"
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,13 +19,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="light">
-      <body
-        className={cn('min-h-screen font-sans antialiased grainy', inter.className)}
-      >
-
-        <Navbar/>
-        {children}
-      </body>
+      <Providers>
+        <body
+          className={cn(
+            "min-h-screen font-sans antialiased grainy",
+            inter.className
+          )}
+        >
+          <Navbar />
+          {children}
+        </body>
+      </Providers>
     </html>
   );
 }
