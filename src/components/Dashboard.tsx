@@ -1,14 +1,19 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
 import UploadButton from "./UploadButton";
-import { Ghost } from "lucide-react";
+import { Ghost, Loader2 } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import Link from "next/link";
 import { format } from "date-fns";
 import { BiMessageDots, BiPlus, BiTrashAlt } from "react-icons/bi";
 import { Button } from "./ui/button";
+import { useState } from "react";
+import { captureRejectionSymbol } from "events";
 
 const Dashboard = () => {
+  const [currentlydeletingfiles, setCurrentlydeletingfiles] = useState<
+    string | null
+  >(null);
   const utils = trpc.useUtils();
 
   const { data: files, isLoading } = trpc.getUserFiles.useQuery();
@@ -16,6 +21,12 @@ const Dashboard = () => {
   const { mutate: deleteFile } = trpc.deleteFile.useMutation({
     onSuccess: () => {
       utils.getUserFiles.invalidate();
+    },
+    onMutate({ id }) {
+      setCurrentlydeletingfiles(id);
+    },
+    onSettled() {
+      setCurrentlydeletingfiles(null);
     },
   });
 
@@ -71,7 +82,11 @@ const Dashboard = () => {
                     className="w-full"
                     variant="destructive"
                   >
-                    <BiTrashAlt className="h-4 w-4 " />
+                    {currentlydeletingfiles === file.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <BiTrashAlt className="h-4 w-4 " />
+                    )}
                   </Button>
                 </div>
               </li>

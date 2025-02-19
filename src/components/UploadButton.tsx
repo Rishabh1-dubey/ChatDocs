@@ -1,7 +1,10 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import UploadDropzone from "./UploadDropzone";
+
+
 
 const UploadButton = () => {
   const [isOpen, setisOpen] = useState<boolean>(false);
@@ -21,7 +24,9 @@ const UploadButton = () => {
         </button>
       </DialogTrigger>
 
-      <DialogContent>hello hero log</DialogContent>
+      <DialogContent>
+        <UploadDropzone />
+      </DialogContent>
     </Dialog>
   );
 };
