@@ -21,6 +21,7 @@ import {
 } from "./ui/dropdown-menu";
 
 import SimpleBar from "simplebar-react";
+import PdfFullScreen from "./PdfFullScreen";
 
 // worker to render pdf
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.mjs`;
@@ -35,6 +36,9 @@ const PdfRenderer: FC<PdfRendererProps> = ({ url }) => {
   const [numPages, setNumpages] = useState<number>();
   const [currPage, setCurrPage] = useState<number>(1);
   const [scale, setScale] = useState<number>(1);
+  const [renderedScale, setRenderedScale] = useState<number | null>(null);
+
+  const isLoading = renderedScale !== scale;
 
   const CustomPageValidator = z.object({
     page: z
@@ -54,7 +58,7 @@ const PdfRenderer: FC<PdfRendererProps> = ({ url }) => {
       page: "1",
     },
     resolver: zodResolver(CustomPageValidator),
-  });
+  })
 
   //for re-size detectore
   const { width, ref } = useResizeDetector();
@@ -62,8 +66,8 @@ const PdfRenderer: FC<PdfRendererProps> = ({ url }) => {
   // creating a handlePageHandler function
   const handlePageSubmit = ({ page }: tCustomPageValidator) => {
     setCurrPage(Number(page));
-    setValue("page", String(page));
-  };
+    setValue("page", String(page))
+  }
 
   return (
     <div className="w-full bg-white rounded-md shadow flex flex-col items-center">
@@ -72,8 +76,10 @@ const PdfRenderer: FC<PdfRendererProps> = ({ url }) => {
           <Button
             disabled={currPage <= 1}
             onClick={() => {
-              setCurrPage((prev) => (prev - 1 > 1 ? prev - 1 : 1));
+              setCurrPage((prev) => (prev - 1 > 1 ? prev - 1 : 1))
+              setValue('page', String(currPage - 1))
             }}
+            
             variant="ghost"
             aria-label="previous page"
           >
@@ -104,7 +110,8 @@ const PdfRenderer: FC<PdfRendererProps> = ({ url }) => {
             onClick={() => {
               setCurrPage((prev) =>
                 prev + 1 > numPages! ? numPages! : prev + 1
-              );
+              )
+              setValue('page', String(currPage + 1))
             }}
             variant="ghost"
             aria-label="next page"
@@ -138,6 +145,8 @@ const PdfRenderer: FC<PdfRendererProps> = ({ url }) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <PdfFullScreen fileUrl={url} />
         </div>
       </div>
 
@@ -161,10 +170,27 @@ const PdfRenderer: FC<PdfRendererProps> = ({ url }) => {
               file={url}
               className="max-h-full"
             >
-              <Page
+              {isLoading && renderedScale ? (
+                <Page
+                  width={width ? width : 1}
+                  pageNumber={currPage}
+                  scale={scale}
+                  key={"@" +renderedScale}
+                />
+              ) : null}
+
+              {/* this is for whose system is too slow */}
+              <Page className={cn(isLoading ? 'hidden' : '')}
                 width={width ? width : 1}
                 pageNumber={currPage}
                 scale={scale}
+                key={"@" + scale}
+                loading={
+                  <div className="flex justify-center">
+                    <Loader2 className="my-24 h-6 w-6 animate-spin"/>
+                  </div>
+                }
+                onRenderSuccess={()=>setRenderedScale(scale)}
               />
             </Document>
           </div>
