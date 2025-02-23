@@ -1,7 +1,6 @@
 'use client'
 
 import { trpc } from '@/app/_trpc/client'
-// import { absoluteUrl } from '@/lib/utils'
 import {
   QueryClient,
   QueryClientProvider,
@@ -26,7 +25,7 @@ const Providers = ({ children }: PropsWithChildren) => {
       client={trpcClient}
       queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        {children}{" "}
       </QueryClientProvider>
     </trpc.Provider>
   )
