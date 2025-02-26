@@ -3,8 +3,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { PineconeStore } from "@langchain/pinecone";
-import { getPineconeClient, getPineconeIndexForGemini } from "@/lib/pinecone";
+import { getPineconeIndexForGemini } from "@/lib/pinecone";
 
 const f = createUploadthing();
 
