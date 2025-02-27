@@ -21,7 +21,7 @@ const ChatInput = ({ isDisabled }: chatInputProps) => {
             <div className="relative">
               <Textarea
                 rows={1}
-                // ref={textareaRef}
+                ref={textareaRef}
                 maxRows={4}
                 autoFocus
                 onChange={handleInputChange}
@@ -41,7 +41,6 @@ const ChatInput = ({ isDisabled }: chatInputProps) => {
                 disabled={isLoading || isDisabled}
                 className="absolute bottom-1.5 right-[8px]"
                 aria-label="send message"
-                type="submit"
                 onClick={() => {
                     addMessage()
                     textareaRef.current?.focus()
