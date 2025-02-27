@@ -26,7 +26,7 @@ async function getPineconeIndex(indexName: string, dimension: number = 768) {
         },
       });
 
-      console.log(`Created new Pinecone index: ${indexName}`);
+      // console.log(`Created new Pinecone index: ${indexName}`);
     } else {
       console.log(`Using existing Pinecone index: ${indexName}`);
     }
