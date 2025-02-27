@@ -91,7 +91,7 @@ export const POST = async (req: NextRequest) => {
       content: msg.text,
     }));
 
-    console.log("Previous Messages:", formattedPrevMessages);
+    // console.log("Previous Messages:", formattedPrevMessages);
 
     // Step 10: Initialize Gemini for chat
     const chatModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -129,7 +129,7 @@ export const POST = async (req: NextRequest) => {
 
     // Step 12: Extract the generated text
     const completion = await response.response.text(); // Ensure `completion` is a string
-    console.log("Generated Response:", completion);
+    // console.log("Generated Response:", completion);
 
     // Step 13: Save the assistant's response to the database
     await db.message.create({

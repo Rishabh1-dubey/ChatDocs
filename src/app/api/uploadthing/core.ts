@@ -29,7 +29,7 @@ export const ourFileRouter = {
       });
 
       try {
-        console.log("checking my file id id corrent or ", file.ufsUrl);
+        // console.log("checking my file id id corrent or ", file.ufsUrl);
         const response = await fetch(file.ufsUrl);
         const blob = await response.blob();
 
@@ -39,7 +39,7 @@ export const ourFileRouter = {
 
         //vectorize and index entire document
         const pineconeIndex = await getPineconeIndexForGemini();
-        console.log("Pinecone index initialized:", pineconeIndex);
+        // console.log("Pinecone index initialized:", pineconeIndex);
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
         const model = genAI.getGenerativeModel({ model: "embedding-001" });
@@ -53,10 +53,10 @@ try {
     }))
   );
 
-  console.log("Embedding Data:", embeddingData);
+  // console.log("Embedding Data:", embeddingData);
 
   const pineconeIndex = await getPineconeIndexForGemini();
-  console.log("Pinecone Index:", pineconeIndex);
+  // console.log("Pinecone Index:", pineconeIndex);
 
   // Set namespace (if needed)
   //@ts-ignore
