@@ -44,7 +44,7 @@ const UploadDropzone = () => {
     <Dropzone
       multiple={false}
       onDrop={async (acceptedFile) => {
-        console.log(acceptedFile);
+        // console.log(acceptedFile);
         setIsuploading(true);
 
         const progressInterval = startSimulatedProgress();
@@ -53,7 +53,7 @@ const UploadDropzone = () => {
         //handle file uploading
         const res = await startUpload(acceptedFile);
 
-        console.log("Just checking the Res content", res);
+        // console.log("Just checking the Res content", res);
         if (!res) {
           return toast({
             title: "Something went wrong",
