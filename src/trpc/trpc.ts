@@ -1,9 +1,5 @@
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { initTRPC, TRPCError } from '@trpc/server';
-import { ReceiptPoundSterling } from 'lucide-react';
-import { use } from 'react';
-import { isatty } from 'tty';
- 
 
 const t = initTRPC.create();
  

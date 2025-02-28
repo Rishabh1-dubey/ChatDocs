@@ -35,10 +35,10 @@ export const ourFileRouter = {
 
         const loader = new PDFLoader(blob);
         const pageLevelDocs = await loader.load();
-        const pagesAmt = pageLevelDocs.length;
+        // const pagesAmt = pageLevelDocs.length;
 
         //vectorize and index entire document
-        const pineconeIndex = await getPineconeIndexForGemini();
+        // const pineconeIndex = await getPineconeIndexForGemini();
         // console.log("Pinecone index initialized:", pineconeIndex);
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
