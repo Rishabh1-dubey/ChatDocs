@@ -1,7 +1,7 @@
 "use client";
 
 import { useToast } from "@/hooks/use-toast";
-import { ChevronDown, ChevronUp, Loader2, Scale, Search } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2,Search } from "lucide-react";
 import { FC, useState } from "react";
 import { pdfjs, Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";

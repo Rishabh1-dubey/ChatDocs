@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Dropzone from "react-dropzone";
-import { Cloud, File, Loader2, Upload } from "lucide-react";
+import { Cloud, File, Loader2 } from "lucide-react";
 import { Progress } from "./ui/progress";
 import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "@/hooks/use-toast";

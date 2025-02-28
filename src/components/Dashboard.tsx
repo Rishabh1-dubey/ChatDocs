@@ -8,7 +8,6 @@ import { format } from "date-fns";
 import { BiMessageDots, BiPlus, BiTrashAlt } from "react-icons/bi";
 import { Button } from "./ui/button";
 import { useState } from "react";
-import { captureRejectionSymbol } from "events";
 
 const Dashboard = () => {
   const [currentlydeletingfiles, setCurrentlydeletingfiles] = useState<
