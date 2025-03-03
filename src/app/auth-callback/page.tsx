@@ -6,13 +6,13 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
 // ✅ Correct type for App Router page props
-interface AuthCallbackPageProps {
+interface AuthCallbackPageProps { 
   searchParams: Record<string, string | string[] | undefined>;
 }
 
-const Page = ({ searchParams }: AuthCallbackPageProps) => {
+const Page =  async ({ searchParams }: AuthCallbackPageProps) => {
   const router = useRouter();
-  const origin = typeof searchParams?.origin === "string" ? searchParams.origin : undefined;
+  const origin =  await typeof searchParams?.origin === "string" ? searchParams.origin : undefined;
 
   const { data, error } = trpc.authCallback.useQuery();
 
