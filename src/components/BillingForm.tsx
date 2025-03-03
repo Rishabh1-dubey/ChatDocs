@@ -58,7 +58,7 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
             <CardTitle>Subscription Plan</CardTitle>
             <CardDescription>
               You are currently on the{' '}
-              {/*@ts-expect-error */}
+             {/* @ts-expect-error: Type narrowing issue, safe due to known plan structure */}
               <strong>{subscriptionPlan.name}</strong> plan.
             </CardDescription>
           </CardHeader>
