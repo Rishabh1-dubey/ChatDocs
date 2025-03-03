@@ -24,7 +24,7 @@ const Messages = ({ fileId }: MessagesProps) => {
       {
         getNextPageParam: (lastPage) =>
           lastPage?.nextCursor,
-        //@ts-expect-error
+        //@ts-expect-error   keepPreviousData is not present in tRPC query options but required for UX
         keepPreviousData: true,
       }
     )
