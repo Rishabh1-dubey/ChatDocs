@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 
 // ✅ Correct type for App Router page props
 interface AuthCallbackPageProps {
-    searchParams?: { [key: string]: string | string[] | undefined }
+  searchParams: Record<string, string | string[] | undefined>; 
 }
 
 const Page = ({ searchParams }: AuthCallbackPageProps) => {
