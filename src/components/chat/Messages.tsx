@@ -24,7 +24,7 @@ const Messages = ({ fileId }: MessagesProps) => {
       {
         getNextPageParam: (lastPage) =>
           lastPage?.nextCursor,
-        //@ts-ignore
+        //@ts-expect-error
         keepPreviousData: true,
       }
     )

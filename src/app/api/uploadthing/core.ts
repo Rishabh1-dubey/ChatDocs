@@ -9,7 +9,7 @@ const f = createUploadthing();
 
 export const ourFileRouter = {
   pdfUploader: f({ pdf: { maxFileSize: "4MB" } })
-    .middleware(async ({ req }) => {
+    .middleware(async () => {
       const { getUser } = getKindeServerSession();
       const user = await getUser();
 
@@ -44,78 +44,39 @@ export const ourFileRouter = {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
         const model = genAI.getGenerativeModel({ model: "embedding-001" });
 
-try {
-  const embeddingData = await Promise.all(
-    pageLevelDocs.map(async (doc, index) => ({
-      id: `${createdFile.id}_${index}`,
-      values: (await model.embedContent(doc.pageContent)).embedding.values,
-      metadata: { page: index, fileId: createdFile.id }
-    }))
-  );
+        try {
+          const embeddingData = await Promise.all(
+            pageLevelDocs.map(async (doc, index) => ({
+              id: `${createdFile.id}_${index}`,
+              values: (
+                await model.embedContent(doc.pageContent)
+              ).embedding.values,
+              metadata: { page: index, fileId: createdFile.id },
+            }))
+          );
 
-  // console.log("Embedding Data:", embeddingData);
+          // console.log("Embedding Data:", embeddingData);
 
-  const pineconeIndex = await getPineconeIndexForGemini();
-  // console.log("Pinecone Index:", pineconeIndex);
-
-  // Set namespace (if needed)
-  //@ts-ignore
-  pineconeIndex.namespace = createdFile.id;
-
-  // Upsert vectors directly (Pinecone v1)
-  await pineconeIndex.upsert(
-    embeddingData.map((vector) => ({
-      id: vector.id,
-      values: vector.values,
-      metadata: vector.metadata
-    }))
-  );
-
-  console.log("Upsert successful");
-} catch (error) {
-  console.error("Error during upsert:", error);
-  throw error;
-}
+          const pineconeIndex = await getPineconeIndexForGemini();
+          // console.log("Pinecone Index:", pineconeIndex);
 
 
 
+          // Upsert vectors directly (Pinecone v1)
+          await pineconeIndex.upsert(
+            embeddingData.map((vector) => ({
+              id: vector.id,
+              values: vector.values,
+              metadata: vector.metadata,
+            }))
+          );
 
-        // ✅ Convert PDF text into embeddings
-        // const embeddingData = await Promise.all(
-        //   pageLevelDocs.map(async (doc, index) => ({
-        //     id: `${createdFile.id}_${index}`, // Unique ID per page
-        //     values: (
-        //       await model.embedContent(doc.pageContent)
-        //     ).embedding.values, // ✅ Gemini Embedding API
-        //     metadata: { page: index, fileId: createdFile.id },
-        //   }))
-        // );
+          console.log("Upsert successful");
+        } catch (error) {
+          console.error("Error during upsert:", error);
+          throw error;
+        }
 
-        // console.log(
-        //   "Display the embedding data ",
-        //   embeddingData
-        // );
-        // console.log(
-        //   "Display my open ai key wheater it is right or not",
-        //   typeof embeddingData
-        // );
-        
-
-        // //check the error data 24 feb
-        // await pineconeIndex.upsert({
-          //@ts-ignore
-        //   namespace:createdFile.id, // ✅ Correct way to specify namespace
-        //   vectors: embeddingData.map((vector) => ({
-        //     id: vector.id, // Ensure each vector has a unique ID
-        //     values: vector.values, // Correctly reference `values`
-        //     metadata: vector.metadata, // Include metadata
-        //   })),
-        // });
-
-        // console.log(
-        //   "Just checking the pincecone  index is imported or not",
-        //   pineconeIndex
-        // );
         await db.file.update({
           data: {
             uploadStatus: "SUCCESS",
@@ -140,4 +101,3 @@ try {
 
 export type OurFileRouter = typeof ourFileRouter;
 
-// `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`

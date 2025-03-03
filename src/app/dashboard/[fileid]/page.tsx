@@ -11,7 +11,8 @@ interface PageProps {
 }
 
 const Page = async ({ params }: PageProps) => {
-  const { fileid } =await params;
+  /* @next-codemod-ignore */
+  const { fileid } = await params;
 
   const { getUser } = getKindeServerSession();
   const user = await getUser();

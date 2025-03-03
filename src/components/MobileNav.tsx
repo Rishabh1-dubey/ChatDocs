@@ -21,7 +21,7 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
     if (pathname === href) {
       toggleOpen()
     }
-  }
+  } 
 
   return (
     <div className='sm:hidden'>
