@@ -2,19 +2,14 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { trpc } from "../_trpc/client";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
-// ✅ Correct type for App Router page props
-
-
-const Page =   () => {
+// Separate component for the content that uses `useSearchParams`
+const AuthCallbackContent = () => {
   const router = useRouter();
-
   const searchParams = useSearchParams();
   const origin = searchParams.get("origin");
-  // const origin =   typeof searchParams?.origin === "string" ? searchParams.origin : undefined;
-
 
   const { data, error } = trpc.authCallback.useQuery();
 
@@ -38,6 +33,15 @@ const Page =   () => {
         <p>You will be redirected automatically.</p>
       </div>
     </div>
+  );
+};
+
+// Main Page component with Suspense boundary
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthCallbackContent />
+    </Suspense>
   );
 };
 
