@@ -23,7 +23,7 @@ const Navbar =async () => {
           <Link
             href='/'
             className='flex z-40 font-semibold'>
-            <span>quill.</span>
+            <span>ChatDocs</span>
           </Link>
 
           <MobileNav isAuth={!!user} />
@@ -33,23 +33,15 @@ const Navbar =async () => {
               <>
                 <Link
                   href='/pricing'
-                  className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
-                  })}>
+                  className='font-medium hover:bg-zinc-100 px-2 py-1 rounded-lg'>
                   Pricing
                 </Link>
                 <LoginLink
-                  className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
-                  })}>
+                  className='font-medium hover:bg-zinc-100 px-2 py-1 rounded-lg'>
                   Sign in
                 </LoginLink>
                 <RegisterLink
-                  className={buttonVariants({
-                    size: 'sm',
-                  })}>
+                   className='font-medium flex bg-blue-700  text-white hover:bg-blue-500 px-3 py-2 rounded-lg'>
                   Get started{' '}
                   <ArrowRight className='ml-1.5 h-5 w-5' />
                 </RegisterLink>
@@ -58,10 +50,7 @@ const Navbar =async () => {
               <>
                 <Link
                   href='/dashboard'
-                  className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
-                  })}>
+                  className="font-medium hover:bg-zinc-100 px-2 py-1 rounded-lg">
                   Dashboard
                 </Link>
 

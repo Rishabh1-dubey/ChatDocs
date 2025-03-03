@@ -1,5 +1,6 @@
 import Dashboard from "@/components/Dashboard";
 import { db } from "@/db";
+import { getUserSubscriptionPlan } from "@/lib/razorpay";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { redirect } from "next/navigation";
 
@@ -16,7 +17,9 @@ const dbuser = await db.user.findFirst({
 })
 
 if(!dbuser)  redirect('/auth-callback?origin=dashboard')
-  return <Dashboard/>
+
+  const subscriptionPlan = await getUserSubscriptionPlan()
+  return <Dashboard  subscriptionPlan={subscriptionPlan}/>
 
  
 }

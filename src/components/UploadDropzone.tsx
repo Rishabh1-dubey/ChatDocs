@@ -7,7 +7,11 @@ import { useToast } from "@/hooks/use-toast";
 import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 
-const UploadDropzone = () => {
+const UploadDropzone = ({
+  isSubscribed,
+}: {
+  isSubscribed: boolean
+}) => {
   const router = useRouter();
   const [isUploading, setIsuploading] = useState<boolean>(true);
 
@@ -15,7 +19,9 @@ const UploadDropzone = () => {
 
   const { toast } = useToast();
 
-  const { startUpload } = useUploadThing("pdfUploader");
+  const { startUpload } = useUploadThing(
+    isSubscribed ? 'proPlanUploader' : 'freePlanUploader'
+  )
 
   const { mutate: startPolling } = trpc.getFile.useMutation({
     onSuccess: (file) => {
@@ -97,7 +103,7 @@ const UploadDropzone = () => {
                   <span className="font-semibold"> Click to Upload </span> or
                   Drag and Drop
                 </p>
-                <p className="text-xs text-zinc-500">PDF (up to 4MB) </p>
+                <p className="text-xs text-zinc-500"> PDF (up to {isSubscribed ? "16" : "4"}MB) </p>
               </div>
 
               {acceptedFiles && acceptedFiles[0] ? (

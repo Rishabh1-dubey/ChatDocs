@@ -1,7 +1,10 @@
 'use client';
 
+import { getUserSubscriptionPlan } from '@/lib/razorpay';
 import { trpc } from '@/app/_trpc/client';
 import MaxWidthWrapper from './MaxWidthWrapper';
+import { Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
 import {
   Card,
   CardDescription,
@@ -10,12 +13,10 @@ import {
   CardTitle,
 } from './ui/card';
 import { Button } from './ui/button';
-import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getUserSubscriptionPlan } from '@/lib/razorpay';
 
 interface BillingFormProps {
-  subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>;
+  subscriptionPlan: Awaited<ReturnType<typeof getUserSubscriptionPlan>>
 }
 
 const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
@@ -64,7 +65,7 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
           </CardHeader>
 
           <CardFooter className="flex flex-col items-start space-y-2 md:flex-row md:justify-between md:space-x-0">
-            <Button type="submit" disabled={status === 'pending'}>
+            <Button type="submit">
               {status === 'pending' ? (
                 <Loader2 className="mr-4 h-4 w-4 animate-spin" />
               ) : null}
@@ -72,6 +73,18 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
                 ? 'Manage Subscription'
                 : 'Upgrade to PRO'}
             </Button>
+            {subscriptionPlan.isSubscribed ? (
+              <p className='rounded-full text-xs font-medium'>
+                {subscriptionPlan.isCanceled
+                  ? 'Your plan will be canceled on '
+                  : 'Your plan renews on'}
+                {format(
+                  subscriptionPlan.razorpayCurrentPeriodEnd!,
+                  'dd.MM.yyyy'
+                )}
+                .
+              </p>
+            ) : null}
           </CardFooter>
         </Card>
       </form>
