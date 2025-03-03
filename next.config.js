@@ -22,7 +22,7 @@ async redirects() {
   },
 
   images: {
-    domains: ['gravatar.com'], // Add the domain here
+    domains: ['lh3.googleusercontent.com'], // Add the domain here
   },
   
 }
