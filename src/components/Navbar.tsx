@@ -10,6 +10,7 @@ import { ArrowRight } from 'lucide-react'
 
 // import MobileNav from './MobileNav'
 import UserAccountNav from './UserAccountNav'
+import MobileNav from './MobileNav'
 
 const Navbar =async () => {
   const { getUser } = await getKindeServerSession()
@@ -25,7 +26,7 @@ const Navbar =async () => {
             <span>quill.</span>
           </Link>
 
-          {/* <MobileNav isAuth={!!user} /> */}
+          <MobileNav isAuth={!!user} />
 
           <div className='hidden items-center space-x-4 sm:flex'>
             {!user ? (
