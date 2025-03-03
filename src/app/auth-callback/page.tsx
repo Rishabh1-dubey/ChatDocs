@@ -4,10 +4,18 @@ import { trpc } from "../_trpc/client";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
-const Page = () => {
+
+
+// Define the props for page.tsx
+interface AuthCallbackPageProps {
+  searchParams: Record<string, string | undefined>;
+}
+
+
+
+const Page = ({ searchParams }: AuthCallbackPageProps) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const origin = searchParams.get("origin");
+  const origin = searchParams.origin; 
 
   // Use the useQuery hook
   const { data, error } = trpc.authCallback.useQuery();
