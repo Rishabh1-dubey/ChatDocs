@@ -1,18 +1,20 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { trpc } from "../_trpc/client";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
 // ✅ Correct type for App Router page props
-interface AuthCallbackPageProps { 
-  searchParams: Record<string, string | string[] | undefined>;
-}
 
-const Page =  async ({ searchParams }: AuthCallbackPageProps) => {
+
+const Page =   () => {
   const router = useRouter();
-  const origin =  await typeof searchParams?.origin === "string" ? searchParams.origin : undefined;
+
+  const searchParams = useSearchParams();
+  const origin = searchParams.get("origin");
+  // const origin =   typeof searchParams?.origin === "string" ? searchParams.origin : undefined;
+
 
   const { data, error } = trpc.authCallback.useQuery();
 
