@@ -58,6 +58,7 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
             <CardTitle>Subscription Plan</CardTitle>
             <CardDescription>
               You are currently on the{' '}
+              {/* @ts-ignore */}
               <strong>{subscriptionPlan.name}</strong> plan.
             </CardDescription>
           </CardHeader>
