@@ -1,6 +1,7 @@
 import { db } from '@/db'
 import { headers } from 'next/headers'
 import crypto from 'crypto'
+import Razorpay from 'razorpay'
 
 export async function POST(request: Request) {
   const body = await request.text()
@@ -16,13 +17,8 @@ export async function POST(request: Request) {
     return new Response('Invalid webhook signature', { status: 400 })
   }
 
-  let payload: any
-  try {
-    payload = JSON.parse(body)
-  } catch (error) {
-    return new Response('Invalid JSON', { status: 400 })
-  }
-
+  const payload = JSON.parse(body)
+  
   const event = payload.event
 
   // ✅ Handle one-time payment or manual subscription via order.paid
