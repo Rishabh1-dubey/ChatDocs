@@ -42,6 +42,7 @@ export async function POST(request: Request) {
         razorpayPlanId: subscription.plan_id,
         razorpayCurrentPeriodEnd: new Date(subscription.current_end * 1000),
         razorpayIsCanceled: false, // Reset canceled status on successful charge
+        
       },
     })
   }

@@ -36,7 +36,7 @@ const Page =  async() => {
           footnote: 'The maximum amount of pages per PDF-file.',
         },
         {
-          text: '4MB file size limit',
+          text: '8MB file size limit',
           footnote: 'The maximum file size of a single PDF file.',
         },
         {
