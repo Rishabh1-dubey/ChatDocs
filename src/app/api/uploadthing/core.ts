@@ -55,6 +55,7 @@ const onUploadComplete = async ({
     
 
     const loader = new PDFLoader(blob);
+    console.log("chencking my loader file",loader)
     const pageLevelDocs = await loader.load();
     
     const pagesAmt = pageLevelDocs.length;

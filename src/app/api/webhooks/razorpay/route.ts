@@ -1,12 +1,12 @@
 import { db } from '@/db'
 import { headers } from 'next/headers'
 import crypto from 'crypto'
-import Razorpay from 'razorpay'
 
 export async function POST(request: Request) {
   const body = await request.text()
-  const headersList = await headers()
-  const signature = headersList.get('X-Razorpay-Signature') || ''
+  const headersList = headers()
+
+  const signature = (await headersList).get('X-Razorpay-Signature') || ''
 
   const expectedSignature = crypto
     .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET || '')
@@ -14,45 +14,56 @@ export async function POST(request: Request) {
     .digest('hex')
 
   if (expectedSignature !== signature) {
-    return new Response('Invalid webhook signature', { status: 400 })
+    return new Response('Webhook signature verification failed', { status: 400 })
   }
 
   const payload = JSON.parse(body)
-  
   const event = payload.event
 
-  // ✅ Handle one-time payment or manual subscription via order.paid
-  if (event === 'order.paid') {
-    const payment = payload.payload.payment.entity
-    const userId = payment.notes?.userId // Pass userId as note while creating Razorpay order
+  if (event === 'subscription.charged') {
+    const subscription = payload.payload.subscription.entity
+    const userId = subscription.notes.userId
 
     if (!userId) {
-      return new Response('User ID not found in payment notes', { status: 400 })
+      return new Response('User ID not found in subscription notes', { status: 400 })
     }
 
-    try {
-      // ✅ Set user as subscribed for 30 days manually
-      const now = new Date()
-      const subscriptionEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
-
-      await db.user.update({
-        where: { id: userId },
-        data: {
-          razorpayCustomerId: payment.customer_id,
-          razorpayCurrentPeriodEnd: subscriptionEnd,
-          razorpayIsCanceled: false,
-        },
-      })
-    } catch (error) {
-      console.error('Failed to update user subscription:', error)
-      return new Response('Database update failed', { status: 500 })
-    }
+    await db.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        razorpaySubscriptionId: subscription.id,
+        razorpayCustomerId: subscription.customer_id,
+        razorpayPlanId: subscription.plan_id,
+        razorpayCurrentPeriodEnd: new Date(subscription.current_end * 1000),
+        razorpayIsCanceled: false,
+      },
+    })
   }
 
-  // 🔴 Optionally Handle payment.failed (for logging or analytics)
+  if (event === 'subscription.cancelled') {
+    const subscription = payload.payload.subscription.entity
+    const userId = subscription.notes.userId
+
+    if (!userId) {
+      return new Response('User ID not found in subscription notes', { status: 400 })
+    }
+
+    await db.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        razorpayIsCanceled: true,
+      },
+    })
+  }
+
   if (event === 'payment.failed') {
     const payment = payload.payload.payment.entity
     console.log(`Payment failed: ${payment.id}, userId: ${payment.notes?.userId || 'N/A'}`)
+    // You can log this or notify via email/slack if needed
   }
 
   return new Response(null, { status: 200 })
