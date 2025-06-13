@@ -1,38 +1,40 @@
-# Chatdocs - A Modern Fullstack SaaS-Platform
+# ChatDocs - A Modern Fullstack SaaS-Platform
 
-ChatDocs is a full-featured SaaS application built with the latest tools and practices in modern web development.
+Built with the Next.js 13.5 App Router, tRPC, TypeScript, Prisma & Tailwind
 
-![Chat docs Banner](./public/thumbnail.png)
+![Project Image](public/thumbnail.png)
 
----
+## Features
 
-## ✨ Features
+- 🛠️ Complete SaaS Built From Scratch
+- 💻 Beautiful Landing Page & Pricing Page Included
+- 💳 Free & Pro Plan Using Stripe
+- 📄 A Beautiful And Highly Functional PDF Viewer
+- 🔄 Streaming API Responses in Real-Time
+- 🔒 Authentication Using Kinde
+- 🎨 Clean, Modern UI Using 'shadcn-ui'
+- 🚀 Optimistic UI Updates for a Great UX
+- ⚡ Infinite Message Loading for Performance
+- 📤 Intuitive Drag n’ Drop Uploads
+- ✨ Instant Loading States
+- 🔧 Modern Data Fetching Using tRPC & Zod
+- 🧠 LangChain for Infinite AI Memory
+- 🌲 Pinecone as our Vector Storage
+- 📊 Prisma as our ORM
+- 🔤 100% written in TypeScript
+- 🎁 ...much more
 
-- 🛠️ **Complete SaaS Built From Scratch**
-- 💻 Beautiful Landing Page & Pricing Page
-- 💳 Free & Pro Plan with **Razorpay**
-- 📄 Stunning PDF Viewer with annotations
-- 🔄 Real-Time Streaming API Responses
-- 🔒 Authentication with **Kinde**
-- 🎨 Modern UI using **shadcn-ui**
-- ⚡ Optimistic UI Updates for Snappy UX
-- 🧠 AI Memory Powered by **LangChain**
-- 🌲 Vector Storage using **Pinecone**
-- 📊 ORM via **Prisma**
-- 🔧 Fullstack Type Safety with **tRPC + Zod**
-- 📤 Drag & Drop File Uploads
-- 🔄 Infinite Message Scrolling
-- 🔤 Written 100% in **TypeScript**
-- 🧩 Modular and Scalable Codebase
+## Getting started
 
----
-
-## 🚀 Getting Started
+To get started with this project, run
 
 ```bash
-git clone https://github.com/joschan21/quill.git
-cd chatdocs
-cp .env.example .env
-# Fill in all the required environment variables
-npm install
-npm dev
+  git clone https://github.com/Rishabh1-dubey/ChatDocs.git
+```
+
+and copy the .env.example variables into a separate .env file, fill them out & and that's all you need to get started!
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
