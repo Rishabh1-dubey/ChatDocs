@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { z } from "zod";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { absoluteUrl } from "@/lib/utils";
-import { getUserSubscriptionPlan, razorpay } from "@/lib/razorpay";
+import { getUserSubscriptionPlan } from "@/lib/stripe";
 import { PLANS } from "@/config/stripe";
 import { stripe } from "@/lib/stripe";
 

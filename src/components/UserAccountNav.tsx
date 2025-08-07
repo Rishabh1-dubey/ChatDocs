@@ -1,5 +1,5 @@
 
-import { getUserSubscriptionPlan } from '@/lib/razorpay'
+import { getUserSubscriptionPlan } from '@/lib/stripe'
 import {
   DropdownMenu,
   DropdownMenuContent,

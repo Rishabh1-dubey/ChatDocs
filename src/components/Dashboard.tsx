@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { BiMessageDots, BiPlus, BiTrashAlt } from "react-icons/bi";
 import { Button } from "./ui/button";
 import { useState } from "react";
-import { getUserSubscriptionPlan } from "@/lib/razorpay";
+import { getUserSubscriptionPlan } from "@/lib/stripe";
 
 
 interface PageProps {

@@ -4,8 +4,8 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { getPineconeIndexForGemini } from "@/lib/pinecone";
-import { getUserSubscriptionPlan } from "@/lib/razorpay";
-import { PLANS } from "@/config/razorpay";
+import { getUserSubscriptionPlan } from "@/lib/stripe";
+import { PLANS } from "@/config/stripe";
 
 const f = createUploadthing();
 
