@@ -2,7 +2,7 @@ import { Pinecone } from "@pinecone-database/pinecone";
 
 // Initialize Pinecone client
 const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY || "", // Add your Pinecone API key to environment variables
+  apiKey: process.env.PINECONE_API_KEY! || "", // Add your Pinecone API key to environment variables
 });
 
 // Function to get or create a Pinecone index

@@ -52,14 +52,12 @@ const onUploadComplete = async ({
     console.log("checking my file id id corrent or ", file.url);
     const response = await fetch(file.url);
     const blob = await response.blob();
-    
 
     const loader = new PDFLoader(blob);
-    console.log("chencking my loader file",loader)
+    // console.log("chencking my loader file", loader);
     const pageLevelDocs = await loader.load();
-    
+
     const pagesAmt = pageLevelDocs.length;
-    
 
     const { subscriptionPlan } = metadata;
     const { isSubscribed } = subscriptionPlan;
@@ -88,7 +86,13 @@ const onUploadComplete = async ({
         pageLevelDocs.map(async (doc, index) => ({
           id: `${createdFile.id}_${index}`,
           values: (await model.embedContent(doc.pageContent)).embedding.values,
-          metadata: { page: index, fileId: createdFile.id },
+          metadata: {
+            page: index,
+            fileId: createdFile.id,
+            // recently made some changes in aug 2025
+            userId: metadata.userId,
+            text: doc.pageContent,
+          },
         }))
       );
 
