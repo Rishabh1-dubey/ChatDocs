@@ -1,22 +1,12 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { buttonVariants } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { PLANS } from "@/config/razorpay";
+import { PLANS } from "@/config/stripe";
 import { cn } from "@/lib/utils";
 import UpgradeButton  from "@/components/UpgradeButton"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight, Check, HelpCircle, Minus } from "lucide-react";
 import Link from 'next/link'
-
-
-
-
-
-
-
-
-
-
 
 
 const Page =  async() => {
@@ -132,7 +122,7 @@ const Page =  async() => {
                           {tagline}
                         </p>
                         <p className='my-5 font-display text-6xl font-semibold'>
-                          Rs.{price}
+                          ${price}
                         </p>
                         <p className='text-gray-500'>
                           per month
