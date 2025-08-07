@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-     "postinstall": "prisma generate"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@google/generative-ai": "^0.22.0",
@@ -55,6 +55,7 @@
     "react-textarea-autosize": "^8.5.7",
     "simplebar-react": "^3.3.0",
     "sse.js": "^2.6.0",
+    "stripe": "^18.4.0",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^7.5.2",
