@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+
+
 import BillingForm from "@/components/BillingForm"
 import { getUserSubscriptionPlan } from "@/lib/stripe"
 
