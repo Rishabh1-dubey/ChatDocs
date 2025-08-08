@@ -1,6 +1,6 @@
 'use client'
 
-import { getUserSubscriptionPlan } from '@/lib/stripe'
+import { getUserSubscriptionPlan } from '@/lib/razorpay'
 import { trpc } from '@/app/_trpc/client'
 import MaxWidthWrapper from './MaxWidthWrapper'
 import {
@@ -74,7 +74,7 @@ const BillingForm = ({
                   ? 'Your plan will be canceled on '
                   : 'Your plan renews on'}
                 {format(
-                  subscriptionPlan.stripeCurrentPeriodEnd!,
+                  subscriptionPlan.razorpayCurrentPeriodEnd!,
                   'dd.MM.yyyy'
                 )}
                 .

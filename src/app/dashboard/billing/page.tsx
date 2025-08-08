@@ -1,8 +1,7 @@
-export const dynamic = 'force-dynamic'
 
 
 import BillingForm from "@/components/BillingForm"
-import { getUserSubscriptionPlan } from "@/lib/stripe"
+import { getUserSubscriptionPlan } from "@/lib/razorpay"
 
 const Page = async () => {
     const subscriptionPlan = await getUserSubscriptionPlan()

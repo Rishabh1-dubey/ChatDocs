@@ -12,10 +12,10 @@ export async function getUserSubscriptionPlan() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  if (! user.id) {
+  if (!user.id) {
     return {
       ...PLANS[0],
-      isSubscribed: false,
+      isSubscribed: true,
       isCanceled: false,
       razorpayCurrentPeriodEnd: null,
     };
@@ -63,5 +63,6 @@ export async function getUserSubscriptionPlan() {
     razorpayCustomerId: dbUser.razorpayCustomerId,
     isSubscribed,
     isCanceled,
+    
   };
 }
