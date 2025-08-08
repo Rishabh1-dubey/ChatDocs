@@ -26,8 +26,8 @@ const BillingForm = ({
 }: BillingFormProps) => {
   const { toast } = useToast()
 
-  const { mutate: createStripeSession, isPending } =
-    trpc.createStripeSession.useMutation({
+  const { mutate: createRazorpaySubscription, isPending } =
+    trpc.createRazorpaySubscription.useMutation({
       onSuccess: ({ url }) => {
         if (url) window.location.href = url
         if (!url) {
@@ -46,7 +46,7 @@ const BillingForm = ({
         className='mt-12'
         onSubmit={(e) => {
           e.preventDefault()
-          createStripeSession()
+          createRazorpaySubscription()
         }}>
         <Card>
           <CardHeader>

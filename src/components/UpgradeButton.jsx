@@ -6,14 +6,14 @@ import { trpc } from '@/app/_trpc/client'
 
 const UpgradeButton = () => {
 
-  const {mutate:createStripeSession} = trpc.createStripeSession.useMutation({
+  const {mutate:createRazorpaySubscription} = trpc.createRazorpaySubscription.useMutation({
     onSuccess: ({url}) => {
       window.location.href = url ?? "/dashboard/billing"
     }
   })
 
   return (
-    <Button onClick={() => createStripeSession()} className='w-full'>
+    <Button onClick={() => createRazorpaySubscription()} className='w-full'>
       Upgrade now <ArrowRight className='h-5 w-5 ml-1.5' />
     </Button>
   )
