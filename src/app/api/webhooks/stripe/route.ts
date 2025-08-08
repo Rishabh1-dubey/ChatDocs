@@ -33,21 +33,24 @@ export async function POST(request: Request) {
     }) 
   }
 
+
+
   if (event.type === 'checkout.session.completed') {
     const subscription =
-      await stripe.subscriptions.retrieve(
-        session.subscription as string
-      ) 
-
+    await stripe.subscriptions.retrieve(
+      session.subscription as string
+    ) 
+    
+    console.log("checking the subscription section in our databaser::::::::::",subscription);
     await db.user.update({
       where: {
         id: session.metadata.userId,
       },
+    
       data: {
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: subscription.customer as string,
-        stripePriceId: subscription.items.data[0]?.price.id,
-       
+        stripePriceId: subscription.items.data[0]?.price.id, 
       },
     }) 
   }
@@ -57,7 +60,7 @@ export async function POST(request: Request) {
     const subscription =
       await stripe.subscriptions.retrieve(
         session.subscription as string
-      )
+      ) as Stripe.Subscription
 
     await db.user.update({
       where: {
