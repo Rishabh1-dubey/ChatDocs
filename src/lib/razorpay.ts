@@ -1,11 +1,11 @@
-import { PLANS } from '@/config/razorpay';
-import { db } from '@/db';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
-import Razorpay from 'razorpay';
+import { PLANS } from "@/config/razorpay";
+import { db } from "@/db";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import Razorpay from "razorpay";
 
 export const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID ?? '',
-  key_secret: process.env.RAZORPAY_KEY_SECRET ?? '',
+  key_id: process.env.RAZORPAY_KEY_ID ?? "",
+  key_secret: process.env.RAZORPAY_KEY_SECRET ?? "",
 });
 
 export async function getUserSubscriptionPlan() {
@@ -23,7 +23,7 @@ export async function getUserSubscriptionPlan() {
 
   const dbUser = await db.user.findFirst({
     where: {
-      id:user.id,
+      id: user.id,
     },
   });
 
@@ -42,8 +42,6 @@ export async function getUserSubscriptionPlan() {
       dbUser.razorpayCurrentPeriodEnd.getTime() + 86_400_000 > Date.now()
   );
 
-
-
   const plan = isSubscribed
     ? PLANS.find((plan) => plan.price.razorpayPlanId === dbUser.razorpayPlanId)
     : PLANS[0];
@@ -53,7 +51,7 @@ export async function getUserSubscriptionPlan() {
     const razorpaySubscription = await razorpay.subscriptions.fetch(
       dbUser.razorpaySubscriptionId
     );
-    isCanceled = razorpaySubscription.status === 'cancelled';
+    isCanceled = razorpaySubscription.status === "cancelled";
   }
 
   return {
@@ -63,6 +61,6 @@ export async function getUserSubscriptionPlan() {
     razorpayCustomerId: dbUser.razorpayCustomerId,
     isSubscribed,
     isCanceled,
-    
+   
   };
 }
