@@ -1,7 +1,7 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { buttonVariants } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { PLANS } from "@/config/stripe";
+import { PLANS } from "@/config/razorpay";
 import { cn } from "@/lib/utils";
 import UpgradeButton  from "@/components/UpgradeButton"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
