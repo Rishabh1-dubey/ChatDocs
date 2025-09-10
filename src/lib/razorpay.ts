@@ -12,12 +12,10 @@ export async function getUserSubscriptionPlan() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  if (!user.id) {
+  if (!user?.id) {
     return {
       ...PLANS[0],
-      isSubscribed: true,
-      isCanceled: false,
-      razorpayCurrentPeriodEnd: null,
+      isSubscribed: false,
     };
   }
 
@@ -31,36 +29,23 @@ export async function getUserSubscriptionPlan() {
     return {
       ...PLANS[0],
       isSubscribed: false,
-      isCanceled: false,
-      razorpayCurrentPeriodEnd: null,
     };
   }
-
-  const isSubscribed = Boolean(
-    dbUser.razorpayPlanId &&
-      dbUser.razorpayCurrentPeriodEnd && // 86400000 = 1 day
-      dbUser.razorpayCurrentPeriodEnd.getTime() + 86_400_000 > Date.now()
-  );
+  
+  // The `isSubscribed` flag is now the single source of truth
+  const isSubscribed = dbUser.isSubscribed;
 
   const plan = isSubscribed
-    ? PLANS.find((plan) => plan.price.razorpayPlanId === dbUser.razorpayPlanId)
+    ? PLANS.find((plan) => plan.name === "Pro")
     : PLANS[0];
-
-  let isCanceled = false;
-  if (isSubscribed && dbUser.razorpaySubscriptionId) {
-    const razorpaySubscription = await razorpay.subscriptions.fetch(
-      dbUser.razorpaySubscriptionId
-    );
-    isCanceled = razorpaySubscription.status === "cancelled";
-  }
 
   return {
     ...plan,
+    isSubscribed,
+    // These fields are no longer critical for checking the plan status
+    isCanceled: dbUser.razorpayIsCanceled,
     razorpaySubscriptionId: dbUser.razorpaySubscriptionId,
     razorpayCurrentPeriodEnd: dbUser.razorpayCurrentPeriodEnd,
     razorpayCustomerId: dbUser.razorpayCustomerId,
-    isSubscribed,
-    isCanceled,
-   
   };
 }

@@ -53,7 +53,7 @@ const BillingForm = ({
             <CardTitle>Subscription Plan</CardTitle>
             <CardDescription>
               You are currently on the{' '}
-              <strong> Free</strong> plan.
+              <strong>{subscriptionPlan.name}</strong> plan.
             </CardDescription>
           </CardHeader>
  
@@ -67,17 +67,18 @@ const BillingForm = ({
                 : 'Upgrade to PRO'}
             </Button>
             
-
+            {/* FIX: Check if the properties exist before trying to use them */}
             {subscriptionPlan.isSubscribed ? (
               <p className='rounded-full text-xs font-medium'>
                 {subscriptionPlan.isCanceled
-                  ? 'Your plan will be canceled on '
-                  : 'Your plan renews on'}
-                {format(
-                  subscriptionPlan.razorpayCurrentPeriodEnd!,
-                  'dd.MM.yyyy'
-                )}
-                .
+                  ? 'Your plan will be canceled.'
+                  // Check if razorpayCurrentPeriodEnd is available before formatting it
+                  : subscriptionPlan.razorpayCurrentPeriodEnd
+                  ? `Your plan renews on ${format(
+                      subscriptionPlan.razorpayCurrentPeriodEnd,
+                      'dd.MM.yyyy'
+                    )}.`
+                  : 'You have lifetime access to the Pro plan.'}
               </p>
             ) : null}
           </CardFooter>

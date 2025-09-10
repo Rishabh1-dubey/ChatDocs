@@ -30,13 +30,18 @@ const onUploadComplete = async ({
     url: string;
   };
 }) => {
+  console.log("[UPLOAD] - onUploadComplete started for file:", file.name);
   const isFileExist = await db.file.findFirst({
     where: {
       key: file.key,
     },
   });
+  if (isFileExist) {
+    console.log("[UPLOAD] - File already exists. Aborting.");
+    return;
+  }
 
-  if (isFileExist) return;
+  // if (isFileExist) return;
 
   const createdFile = await db.file.create({
     data: {
@@ -47,6 +52,9 @@ const onUploadComplete = async ({
       uploadStatus: "PROCESSING",
     },
   });
+  console.log(
+    `[UPLOAD] - Created file record in DB with ID: ${createdFile.id}`
+  );
 
   try {
     console.log("checking my file id id corrent or ", file.url);
@@ -58,6 +66,7 @@ const onUploadComplete = async ({
     const pageLevelDocs = await loader.load();
 
     const pagesAmt = pageLevelDocs.length;
+    console.log(`[UPLOAD] - PDF loaded successfully. Found ${pagesAmt} pages.`);
 
     const { subscriptionPlan } = metadata;
     const { isSubscribed } = subscriptionPlan;
@@ -68,6 +77,7 @@ const onUploadComplete = async ({
       pagesAmt > PLANS.find((plan) => plan.name === "Free")!.pagesPerPdf;
 
     if ((isSubscribed && isProExceeded) || (!isSubscribed && isFreeExceeded)) {
+      console.log("[UPLOAD] - Page limit exceeded. Marking file as FAILED.");
       await db.file.update({
         data: {
           uploadStatus: "FAILED",
@@ -76,8 +86,10 @@ const onUploadComplete = async ({
           id: createdFile.id,
         },
       });
+      return;
     }
 
+    console.log("[UPLOAD] - Starting embedding process...");
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
     const model = genAI.getGenerativeModel({ model: "embedding-001" });
 
@@ -96,7 +108,15 @@ const onUploadComplete = async ({
         }))
       );
 
+      console.log(
+        `[UPLOAD] - Successfully created ${embeddingData.length} embeddings.`
+      );
+
+      console.log("[UPLOAD] - Connecting to Pinecone and upserting vectors...");
       const pineconeIndex = await getPineconeIndexForGemini();
+      await pineconeIndex.upsert(embeddingData);
+
+         console.log("[UPLOAD] - Upsert to Pinecone successful.");
 
       // Upsert vectors directly (Pinecone v1)
       await pineconeIndex.upsert(
@@ -106,7 +126,7 @@ const onUploadComplete = async ({
           metadata: vector.metadata,
         }))
       );
-
+   
       console.log("Upsert successful");
     } catch (error) {
       console.error("Error during upsert:", error);
@@ -121,6 +141,7 @@ const onUploadComplete = async ({
         id: createdFile.id,
       },
     });
+      console.log("[UPLOAD] - Marked file as SUCCESS in DB.");
   } catch (error) {
     console.log(error);
     await db.file.update({
