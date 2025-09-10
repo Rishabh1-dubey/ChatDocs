@@ -216,7 +216,7 @@ const Page =  async() => {
                               className: 'w-full',
                               variant: 'secondary',
                             })}>
-                            {user ? 'Upgrade now' : 'Sign up'}
+                            {user ? " You are now Free Plan" : 'Sign up'}
                             <ArrowRight className='h-5 w-5 ml-1.5' />
                           </Link>
                         ) : user ? (
