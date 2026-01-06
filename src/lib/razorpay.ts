@@ -35,9 +35,8 @@ export async function getUserSubscriptionPlan() {
   // The `isSubscribed` flag is now the single source of truth
   const isSubscribed = dbUser.isSubscribed;
 
-  const plan = isSubscribed
-    ? PLANS.find((plan) => plan.name === "Pro")
-    : PLANS[0];
+  const foundPlan = PLANS.find((p) => p.name === "Pro");
+  const plan = isSubscribed && foundPlan ? foundPlan : PLANS[0];
 
   return {
     ...plan,
