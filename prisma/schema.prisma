@@ -1,33 +1,49 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id    String @id @unique //matches kinde user id
-  email String @unique
+  id                       String    @id @unique
+  email                    String    @unique
+  razorpayCurrentPeriodEnd DateTime? @map("razorpay_current_period_end")
+  razorpayCustomerId       String?   @unique @map("razorpay_customer_id")
+  razorpayIsCanceled       Boolean   @default(false) @map("razorpay_is_canceled")
+  razorpayPlanId           String?   @map("razorpay_plan_id")
+  razorpaySubscriptionId   String?   @unique @map("razorpay_subscription_id")
+  isSubscribed             Boolean   @default(false) @map("is_subscribed")
+  File                     File[]
+  Message                  Message[]
+}
 
-  File    File[]
-  Message Message[]
+model File {
+  id           String       @id @default(cuid())
+  name         String
+  uploadStatus UploadStatus @default(PENDING)
+  url          String
+  key          String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  userId       String?
+  User         User?        @relation(fields: [userId], references: [id])
+  messages     Message[]
+}
 
-
-
-  razorpayCustomerId          String?   @unique @map(name: "razorpay_customer_id")
-  razorpaySubscriptionId      String?   @unique @map(name: "razorpay_subscription_id")
-  razorpayPlanId               String?   @map(name: "razorpay_plan_id")
-  razorpayCurrentPeriodEnd    DateTime? @map(name: "razorpay_current_period_end")
-  razorpayIsCanceled          Boolean   @default(false) @map(name: "razorpay_is_canceled")
-   isSubscribed               Boolean   @default(false) @map(name: "is_subscribed")
+model Message {
+  id            String   @id @default(cuid())
+  text          String
+  isUserMessage Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        String?
+  fileId        String?
+  File          File?    @relation(fields: [fileId], references: [id])
+  User          User?    @relation(fields: [userId], references: [id])
 }
 
 enum UploadStatus {
@@ -35,33 +51,4 @@ enum UploadStatus {
   PROCESSING
   FAILED
   SUCCESS
-}
-
-model File {
-  id   String @id @default(cuid())
-  name String
-
-  uploadStatus UploadStatus @default(PENDING)
-
-  url       String
-  key       String
-  messages  Message[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  User      User?     @relation(fields: [userId], references: [id])
-  userId    String?
-}
-
-model Message {
-  id   String @id @default(cuid())
-  text String @db.Text()
-
-  isUserMessage Boolean
-  User          User?    @relation(fields: [userId], references: [id])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  userId String?
-  File   File?   @relation(fields: [fileId], references: [id])
-  fileId String?
 }

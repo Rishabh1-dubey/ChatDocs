@@ -1,5 +1,5 @@
 import { PLANS } from "@/config/razorpay";
-import { db } from "@/db";
+import { db } from "@/db/index";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import Razorpay from "razorpay";
 
@@ -31,7 +31,7 @@ export async function getUserSubscriptionPlan() {
       isSubscribed: false,
     };
   }
-  
+
   // The `isSubscribed` flag is now the single source of truth
   const isSubscribed = dbUser.isSubscribed;
 

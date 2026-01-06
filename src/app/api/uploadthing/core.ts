@@ -1,7 +1,8 @@
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// 1. Correct Import
+import { GoogleGenAI } from "@google/genai";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { getPineconeIndexForGemini } from "@/lib/pinecone";
 import { getUserSubscriptionPlan } from "@/lib/razorpay";
@@ -19,6 +20,7 @@ const middleware = async () => {
 
   return { subscriptionPlan, userId: user.id };
 };
+
 const onUploadComplete = async ({
   metadata,
   file,
@@ -41,8 +43,6 @@ const onUploadComplete = async ({
     return;
   }
 
-  // if (isFileExist) return;
-
   const createdFile = await db.file.create({
     data: {
       key: file.key,
@@ -57,12 +57,11 @@ const onUploadComplete = async ({
   );
 
   try {
-    console.log("checking my file id id corrent or ", file.url);
+    console.log("Fetching file from url:", file.url);
     const response = await fetch(file.url);
     const blob = await response.blob();
 
     const loader = new PDFLoader(blob);
-    // console.log("chencking my loader file", loader);
     const pageLevelDocs = await loader.load();
 
     const pagesAmt = pageLevelDocs.length;
@@ -90,22 +89,41 @@ const onUploadComplete = async ({
     }
 
     console.log("[UPLOAD] - Starting embedding process...");
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "embedding-001" });
+
+    // 2. Initialize New SDK
+    const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     try {
       const embeddingData = await Promise.all(
-        pageLevelDocs.map(async (doc, index) => ({
-          id: `${createdFile.id}_${index}`,
-          values: (await model.embedContent(doc.pageContent)).embedding.values,
-          metadata: {
-            page: index,
-            fileId: createdFile.id,
-            // recently made some changes in aug 2025
-            userId: metadata.userId,
-            text: doc.pageContent,
-          },
-        }))
+        pageLevelDocs.map(async (doc, index) => {
+          // 3. FIX: Use 'contents' (plural) and correct structure
+          const result = await genAI.models.embedContent({
+            model: "text-embedding-004",
+            contents: [
+              {
+                parts: [{ text: doc.pageContent }],
+              },
+            ],
+          });
+
+          // 4. FIX: Handle 'possibly undefined' error
+          const values = result.embeddings?.[0]?.values;
+
+          if (!values) {
+            throw new Error(`Failed to generate embedding for page ${index}`);
+          }
+
+          return {
+            id: `${createdFile.id}_${index}`,
+            values: values,
+            metadata: {
+              page: index,
+              fileId: createdFile.id,
+              userId: metadata.userId,
+              text: doc.pageContent,
+            },
+          };
+        })
       );
 
       console.log(
@@ -114,20 +132,22 @@ const onUploadComplete = async ({
 
       console.log("[UPLOAD] - Connecting to Pinecone and upserting vectors...");
       const pineconeIndex = await getPineconeIndexForGemini();
-      await pineconeIndex.upsert(embeddingData);
 
-         console.log("[UPLOAD] - Upsert to Pinecone successful.");
-
-      // Upsert vectors directly (Pinecone v1)
+      // 5. FIX: Simplified Upsert (Removed double upsert & fixed types)
+      // We map specifically to ensure Typescript knows this matches the Pinecone Record type
       await pineconeIndex.upsert(
         embeddingData.map((vector) => ({
           id: vector.id,
           values: vector.values,
-          metadata: vector.metadata,
+          metadata: {
+            ...vector.metadata,
+            page: vector.metadata.page, // Explicitly passing number
+            text: vector.metadata.text, // Explicitly passing string
+          },
         }))
       );
-   
-      console.log("Upsert successful");
+
+      console.log("[UPLOAD] - Upsert successful");
     } catch (error) {
       console.error("Error during upsert:", error);
       throw error;
@@ -141,7 +161,7 @@ const onUploadComplete = async ({
         id: createdFile.id,
       },
     });
-      console.log("[UPLOAD] - Marked file as SUCCESS in DB.");
+    console.log("[UPLOAD] - Marked file as SUCCESS in DB.");
   } catch (error) {
     console.log(error);
     await db.file.update({
@@ -154,6 +174,7 @@ const onUploadComplete = async ({
     });
   }
 };
+
 export const ourFileRouter = {
   freePlanUploader: f({ pdf: { maxFileSize: "8MB" } })
     .middleware(middleware)

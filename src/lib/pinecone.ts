@@ -10,7 +10,9 @@ async function getPineconeIndex(indexName: string, dimension: number = 768) {
   try {
     // Check if the index already exists
     const indexList = await pinecone.listIndexes();
-    const indexExists = indexList.indexes?.some((index) => index.name === indexName);
+    const indexExists = indexList.indexes?.some(
+      (index) => index.name === indexName
+    );
 
     if (!indexExists) {
       // Create a new index if it doesn't exist
@@ -46,7 +48,7 @@ export function getPineconeClient() {
 
 // Function to get the Pinecone index (for Gemini embeddings)
 export async function getPineconeIndexForGemini() {
-  const indexName = "chatdocs"; // Use a specific index for Gemini
+  const indexName = "chatdocss"; // Use a specific index for Gemini
   const dimension = 768; // Gemini embeddings have 768 dimensions
   return await getPineconeIndex(indexName, dimension);
 }

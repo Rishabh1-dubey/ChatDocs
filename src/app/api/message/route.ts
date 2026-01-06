@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { getPineconeIndexForGemini } from "@/lib/pinecone";
 import { SendMessageValidator } from "@/lib/SendMessageValidator";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { NextRequest } from "next/server";
 
@@ -34,26 +34,45 @@ export const POST = async (req: NextRequest) => {
     },
   });
 
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-  const model = genAI.getGenerativeModel({ model: "embedding-001" });
-
+  const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+  // try {
+  //   const modelsResponse = await genAI.models.list();
+  //   console.log("---- AVAILABLE MODELS LIST START ----");
+  //   console.log(modelsResponse);
+  //   console.log("---- AVAILABLE MODELS LIST END ----");
+  // } catch (error) {
+  //   console.log("List Models Error:", error);
+  // }
   try {
-    const embeddingResponse = await model.embedContent(message);
-    const embeddingVector = embeddingResponse.embedding.values;
+    // FREE Embedding Model
+    const embeddingResponse = await genAI.models.embedContent({
+      model: "models/text-embedding-004", // FREE
+      contents: [
+        {
+          parts: [{ text: message }],
+        },
+      ],
+    });
+
+    const embeddingVector = embeddingResponse.embeddings?.[0]?.values;
+
+    if (!embeddingVector) {
+      throw new Error("Failed to generate embedding for message");
+    }
 
     const pineconeIndex = await getPineconeIndexForGemini();
-    
+
     const queryResponse = await pineconeIndex.query({
       topK: 5,
       vector: embeddingVector,
-      filter: { fileId: { '$eq': file.id } },
+      filter: { fileId: { $eq: file.id } },
       includeMetadata: true,
     });
 
     const context = queryResponse.matches
       .map((match) => match.metadata?.text)
       .join("\n\n");
-    
+
     const prevMessages = await db.message.findMany({
       where: { fileId },
       orderBy: { createdAt: "asc" },
@@ -65,9 +84,6 @@ export const POST = async (req: NextRequest) => {
       content: msg.text,
     }));
 
-    const chatModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    // **THE FINAL, STRICTEST PROMPT FOR GENUINE AND RELEVANT ANSWERS**
     const prompt = `
       You are a highly intelligent assistant whose purpose is to answer questions based *only* on the provided document context.
 
@@ -92,8 +108,22 @@ export const POST = async (req: NextRequest) => {
       USER QUESTION: ${message}
     `;
 
-    const result = await chatModel.generateContent(prompt);
-    const completion = result.response.text();
+    // Use FREE Gemini Flash model
+    const result = await genAI.models.generateContent({
+      model: "models/gemini-flash-latest",
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
+        },
+      ],
+    });
+
+    const completion = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!completion) {
+      throw new Error("No response content generated");
+    }
 
     await db.message.create({
       data: {
