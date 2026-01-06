@@ -13,9 +13,7 @@ export const POST = async (req: NextRequest) => {
   if (!user || !user.id) {
     return new Response("Unauthorized", { status: 401 });
   }
-  const { id: userId } = user;
-
-  if (!userId) return new Response("Unauthorized", { status: 401 });
+  const userId = user.id;
 
   const { fileId, message } = SendMessageValidator.parse(body);
 
