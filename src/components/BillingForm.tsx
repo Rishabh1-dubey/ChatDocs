@@ -67,15 +67,16 @@ const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
             {/* FIX: Check if the properties exist before trying to use them */}
             {subscriptionPlan.isSubscribed ? (
               <p className="rounded-full text-xs font-medium">
-                {subscriptionPlan.isCanceled
-                  ? "Your plan will be canceled."
-                  : // Check if razorpayCurrentPeriodEnd is available before formatting it
-                  subscriptionPlan.razorpayCurrentPeriodEnd
-                  ? `Your plan renews on ${format(
-                      subscriptionPlan.razorpayCurrentPeriodEnd,
+                {/* TypeScript ko ignore karne ke liye 'as any' use kiya */}
+                {(subscriptionPlan as any).isCanceled
+                  ? "Your plan will be canceled on "
+                  : "Your plan renews on "}
+                {(subscriptionPlan as any).razorpayCurrentPeriodEnd
+                  ? format(
+                      (subscriptionPlan as any).razorpayCurrentPeriodEnd,
                       "dd.MM.yyyy"
-                    )}.`
-                  : "You have lifetime access to the Pro plan."}
+                    )
+                  : null}
               </p>
             ) : null}
           </CardFooter>
