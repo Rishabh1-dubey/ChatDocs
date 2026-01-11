@@ -1,4 +1,4 @@
-# ChatDocs - A Modern Fullstack SaaS-Platform
+# ChatDocs - A Modern Full-Stack SaaS Platform
 
 Built with the Next.js 13.5 App Router, tRPC, TypeScript, Prisma & Tailwind
 
